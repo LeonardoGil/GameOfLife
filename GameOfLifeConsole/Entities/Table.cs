@@ -2,19 +2,24 @@
 {
     internal class Table
     {
+        public readonly int maximumGenerations;
+        
         private readonly int rows;
         private readonly int columns;
 
+        public int Generation { get; private set; }
+
         public Cell[] Cells { get; set; }
 
-        public Table(int rowLenght, int columnLeght)
+        public Table(int rowLenght, int columnLeght, int maxGen)
         {
             rows = rowLenght;
             columns = columnLeght;
+            maximumGenerations = maxGen;
 
             Cells = new Cell[rows * columns];
 
-            var arrayLenght = Cells.Length;
+            var arrayLenght = 0;
 
             var aliveCells = GenerateRandomCells(10);
 
@@ -25,7 +30,10 @@
                                                       pos.Item2 == y);
 
                     Cells[arrayLenght] = new Cell(x, y, alive);
-                    
+
+                    if (arrayLenght == Cells.Length - 1)
+                        return;
+
                     arrayLenght++;
                 }
         }
@@ -47,6 +55,11 @@
         }
 
         public (int, int)[] GetNeighboringCells()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ProcessGeneration()
         {
             throw new NotImplementedException();
         }
