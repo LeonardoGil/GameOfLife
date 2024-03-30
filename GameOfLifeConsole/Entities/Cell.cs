@@ -29,30 +29,26 @@ namespace GameOfLifeConsole.Entities
 
         public void ProcessLivingCell(List<Cell> cells)
         {
-            if (!cells.Any(x => x.Alive))
-                WillLive = false;
+            var alives = cells.Where(x => x.Alive).Count();
 
-            if (cells.Where(x => x.Alive).Count() >= 3)
+            if (alives < 2 || alives > 3)
                 WillLive = false;
-
-            WillLive = true;
+            else
+                WillLive = true;
         }
 
         public void ProcessDeadCell(List<Cell> cells)
         {
             if (cells.Where(x => x.Alive).Count() == 3)
                 WillLive = true;
-
-            WillLive = false;
+            else
+                WillLive = false;
         }
 
         public void NextGeneration()
         {
-            if (WillLive.HasValue)
-            {
-                Alive = WillLive.Value;
-                WillLive = default;
-            }
+            Alive = WillLive.Value;
+            WillLive = default;
         }
     }
 }

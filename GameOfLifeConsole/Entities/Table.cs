@@ -7,11 +7,11 @@
         private readonly int rows;
         private readonly int columns;
 
-        public int Generation { get; private set; }
+        public int Generation { get; private set; } = 1;
 
         public Cell[] Cells { get; set; }
 
-        public Table(int rowLenght, int columnLeght, int maxGen)
+        public Table(int rowLenght, int columnLeght, int maxGen, int start)
         {
             rows = rowLenght;
             columns = columnLeght;
@@ -21,7 +21,7 @@
 
             var arrayLenght = 0;
 
-            var aliveCells = GenerateRandomCells(10);
+            var aliveCells = GenerateRandomCells(start);
 
             for (int x = 0; x < columns; x++)
                 for (int y = 0; y < rows; y++)
@@ -59,17 +59,17 @@
             return new List<Cell>
             {
                 // North
-                Cells.FirstOrDefault(x => x.Row == (cell.Row - 1) && x.Column == (x.Column - 1)),
-                Cells.FirstOrDefault(x => x.Row == (cell.Row - 1)),
-                Cells.FirstOrDefault(x => x.Row == (cell.Row - 1) && x.Column == (x.Column + 1)),
+                Cells.FirstOrDefault(x => x.Row == (cell.Row - 1) && x.Column == (cell.Column - 1)),
+                Cells.FirstOrDefault(x => x.Row == (cell.Row - 1) && x.Column == cell.Column),
+                Cells.FirstOrDefault(x => x.Row == (cell.Row - 1) && x.Column == (cell.Column + 1)),
                 
-                Cells.FirstOrDefault(x => x.Column == (x.Column - 1)),
-                Cells.FirstOrDefault(x => x.Column == (x.Column + 1)),
+                Cells.FirstOrDefault(x => x.Row == cell.Row && x.Column == (cell.Column - 1)),
+                Cells.FirstOrDefault(x => x.Row == cell.Row && x.Column == (cell.Column + 1)),
                 
                 // South
-                Cells.FirstOrDefault(x => x.Row == (cell.Row + 1) && x.Column == (x.Column - 1)),
-                Cells.FirstOrDefault(x => x.Row == (cell.Row + 1)),
-                Cells.FirstOrDefault(x => x.Row == (cell.Row + 1) && x.Column == (x.Column + 1))
+                Cells.FirstOrDefault(x => x.Row == (cell.Row + 1) && x.Column == (cell.Column - 1)),
+                Cells.FirstOrDefault(x => x.Row == (cell.Row + 1) && x.Column == cell.Column),
+                Cells.FirstOrDefault(x => x.Row == (cell.Row + 1) && x.Column == (cell.Column + 1))
             }
             .Where(c => c is not null)
             .ToList();
@@ -77,9 +77,10 @@
 
         public void ProcessGeneration()
         {
-            Parallel.ForEach(Cells, cell => cell.ProcessCell(GetNeighboringCells(cell)));
+            Cells.ToList().ForEach(cell => cell.ProcessCell(GetNeighboringCells(cell)));
+            Cells.ToList().ForEach(cell => cell.NextGeneration());
 
-
+            Generation++;
         }
     }
 }
