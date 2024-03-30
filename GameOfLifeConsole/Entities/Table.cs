@@ -3,7 +3,7 @@
     internal class Table
     {
         public readonly int maximumGenerations;
-        
+
         private readonly int rows;
         private readonly int columns;
 
@@ -54,14 +54,32 @@
             return result;
         }
 
-        public (int, int)[] GetNeighboringCells()
+        public List<Cell> GetNeighboringCells(Cell cell)
         {
-            throw new NotImplementedException();
+            return new List<Cell>
+            {
+                // North
+                Cells.FirstOrDefault(x => x.Row == (cell.Row - 1) && x.Column == (x.Column - 1)),
+                Cells.FirstOrDefault(x => x.Row == (cell.Row - 1)),
+                Cells.FirstOrDefault(x => x.Row == (cell.Row - 1) && x.Column == (x.Column + 1)),
+                
+                Cells.FirstOrDefault(x => x.Column == (x.Column - 1)),
+                Cells.FirstOrDefault(x => x.Column == (x.Column + 1)),
+                
+                // South
+                Cells.FirstOrDefault(x => x.Row == (cell.Row + 1) && x.Column == (x.Column - 1)),
+                Cells.FirstOrDefault(x => x.Row == (cell.Row + 1)),
+                Cells.FirstOrDefault(x => x.Row == (cell.Row + 1) && x.Column == (x.Column + 1))
+            }
+            .Where(c => c is not null)
+            .ToList();
         }
 
         public void ProcessGeneration()
         {
-            throw new NotImplementedException();
+            Parallel.ForEach(Cells, cell => cell.ProcessCell(GetNeighboringCells(cell)));
+
+
         }
     }
 }
