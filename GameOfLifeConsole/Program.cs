@@ -1,24 +1,45 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using GameOfLifeConsole.Entities;
+using System.Diagnostics;
 
-var table = new Table(8, 8, 5);
+var table = new Table(40, 60, 100, 250);
 var groupRows = table.Cells.GroupBy(x => x.Row);
+var stopWatch = new Stopwatch();
+
+Console.WriteLine("Iniciando Jogo da Vida");
+Console.WriteLine("Aperte Enter para começar...");
+Console.Read();
 
 do
 {
+    Console.Clear();
+    Console.WriteLine($"Geração: {table.Generation} (Levou {stopWatch.ElapsedMilliseconds}ms){Environment.NewLine}");
     Show();
 
+    stopWatch.Restart();
+    stopWatch.Start();
     table.ProcessGeneration();
+    stopWatch.Stop();
 
+    Thread.Sleep(150);
 } while (table.Generation <= table.maximumGenerations);
 
 void Show()
 {
-    foreach (var row in groupRows)
+    foreach (var rowGroup in groupRows)
     {
-        var cells = row.Select(x => x.Alive ? "X" : "O");
-        var line = "| " + string.Join(" | ", cells) + " |";
+        Console.Write("| ");
+        foreach (var row in rowGroup)
+        {
+            if (row.Alive)
+                Console.ForegroundColor = ConsoleColor.Green;
+            else
+                Console.ForegroundColor = ConsoleColor.Red;
 
-        Console.WriteLine(line);
+            Console.Write("O");
+        }
+        Console.ResetColor();
+        Console.Write(" |");
+        Console.Write(Environment.NewLine);
     }
 }
